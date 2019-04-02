@@ -10,5 +10,7 @@
 !/lib/*
 !/forms
 !/forms/*
+!/choregraphies
+!/choregraphies/*
 !README.md
 !lslpub_handChoregraph.pro

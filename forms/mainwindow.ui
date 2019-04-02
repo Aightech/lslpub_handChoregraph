@@ -25,7 +25,7 @@
      </widget>
     </item>
     <item row="1" column="2" colspan="2">
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="pushButton_save">
       <property name="font">
        <font>
         <pointsize>12</pointsize>
@@ -44,7 +44,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Step Period (s):</string>
+       <string>Step Period (ms):</string>
       </property>
      </widget>
     </item>
@@ -82,7 +82,7 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="pushButton_open">
       <property name="font">
        <font>
         <pointsize>12</pointsize>
@@ -103,7 +103,7 @@
      </widget>
     </item>
     <item row="4" column="2" colspan="2">
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="pushButton_play">
       <property name="font">
        <font>
         <pointsize>12</pointsize>
@@ -115,14 +115,15 @@
      </widget>
     </item>
     <item row="4" column="1">
-     <widget class="QDoubleSpinBox" name="doubleSpinBox">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
+     <widget class="QSpinBox" name="spinBox">
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>5000</number>
       </property>
       <property name="value">
-       <double>1.000000000000000</double>
+       <number>1000</number>
       </property>
      </widget>
     </item>
