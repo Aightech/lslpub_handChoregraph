@@ -69,18 +69,6 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>Hand:</string>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0" colspan="2">
      <widget class="QPushButton" name="pushButton_open">
       <property name="font">
@@ -90,15 +78,6 @@
       </property>
       <property name="text">
        <string>Open</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1" colspan="3">
-     <widget class="QComboBox" name="comboBox">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
       </property>
      </widget>
     </item>
@@ -124,6 +103,39 @@
       </property>
       <property name="value">
        <number>1000</number>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2" colspan="2">
+     <widget class="QComboBox" name="comboBox">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QLabel" name="label_4">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Hand:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="pushButton_addStep">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Add Step</string>
       </property>
      </widget>
     </item>

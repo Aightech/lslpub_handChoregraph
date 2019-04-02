@@ -23,8 +23,10 @@ private slots:
     bool openFile();
     bool saveFile();
     void update();
+    void updateTable(int,int);
     void startLSLStream();
     void createLSLStream();
+    void addStep();
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);

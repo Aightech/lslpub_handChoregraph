@@ -12,5 +12,7 @@
 !/forms/*
 !/choregraphies
 !/choregraphies/*
+!/release
+!/release/*
 !README.md
 !lslpub_handChoregraph.pro
