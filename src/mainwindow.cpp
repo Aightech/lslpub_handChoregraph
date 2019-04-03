@@ -1,3 +1,10 @@
+/**
+ * \file mainwindow.cpp
+ * \brief TODO.
+ * \author Alexis Devillard
+ * \version 1.0
+ * \date 03 march 2019
+ */
 #include "include/mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -18,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->comboBox->addItem("Left_Hand",0);
     ui->comboBox->addItem("Right_Hand",1);
 
-    createLSLStream();
+    //createLSLStream();
 
     ui->lineEdit->setText("choregraphies/01.cry");
     if(!openFile())
@@ -26,6 +33,12 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->tableWidget->setRowCount(4);
         for(int i=0; i< 4; i++)
         {
+            std::vector<float> v(m_nbJoints);
+            m_choregraphy.push_back(v);
+            for(unsigned j =0; j<m_nbJoints; j++)
+            {
+                m_choregraphy[i][j]=0;
+            }
             for(int j=0; j< 5; j++)
             {
                 QTableWidgetItem *item = new QTableWidgetItem("0");
@@ -136,6 +149,8 @@ void MainWindow::startLSLStream()
 {
     try
     {
+        if(m_outlet==nullptr)
+            createLSLStream();
         // send it
         m_sendingInd = m_choregraphy.size();
 
