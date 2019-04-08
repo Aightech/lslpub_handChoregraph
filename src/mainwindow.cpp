@@ -15,8 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->tableWidget->setColumnCount(5);
-    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
+    ui->tableWidget->setColumnCount(6);
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
     for(int j=0; j< 5; j++)
         ui->tableWidget->setColumnWidth(j,100);
 
@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
             {
                 m_choregraphy[i][j]=0;
             }
-            for(int j=0; j< 5; j++)
+            for(int j=0; j< 6; j++)
             {
                 QTableWidgetItem *item = new QTableWidgetItem("0");
                 item->setCheckState(Qt::CheckState::Unchecked);
@@ -74,7 +74,7 @@ bool MainWindow::openFile()
     }
     m_choregraphy.clear();
     ui->tableWidget->clear();
-    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
 
     std::cout << "Reading file: " << ui->lineEdit->text().toStdString() << " ..."<< std::endl;
     unsigned i=0;
@@ -90,12 +90,20 @@ bool MainWindow::openFile()
         }
         std::cout << std::endl;
         ui->tableWidget->setRowCount(static_cast<int>(i+1));
-        for(unsigned j=0; j< 5; j++)
+        bool state = ((m_choregraphy[i][0]>20)?true:false);
+        QTableWidgetItem *item = new QTableWidgetItem(QString::number(static_cast<double>(m_choregraphy[i][0])));
+        item->setCheckState((state)?Qt::CheckState::Checked:Qt::CheckState::Unchecked);
+        ui->tableWidget->setItem(static_cast<int>(i), 0, item);
+        state = ((m_choregraphy[i][2]>20)?true:false);
+        item = new QTableWidgetItem(QString::number(static_cast<double>(m_choregraphy[i][2])));
+        item->setCheckState((state)?Qt::CheckState::Checked:Qt::CheckState::Unchecked);
+        ui->tableWidget->setItem(static_cast<int>(i), 1, item);
+        for(unsigned j=1; j< 5; j++)
         {
             bool state = ((m_choregraphy[i][j*3]>20)?true:false);
             QTableWidgetItem *item = new QTableWidgetItem(QString::number(static_cast<double>(m_choregraphy[i][j*3])));
             item->setCheckState((state)?Qt::CheckState::Checked:Qt::CheckState::Unchecked);
-            ui->tableWidget->setItem(i, j, item);
+            ui->tableWidget->setItem(static_cast<int>(i), j+1, item);
         }
 
         i++;
@@ -140,8 +148,18 @@ void MainWindow::updateTable(int i, int j)
         ui->tableWidget->item(i,j)->setText("70");
     else
         ui->tableWidget->item(i,j)->setText("0");
-    for(int k = 0; k < 3; k++)
-        m_choregraphy[i][3*j+k]=ui->tableWidget->item(i,j)->text().toInt();
+
+    if(j>1)
+    {
+        for(int k = 0; k < 3; k++)
+            m_choregraphy[i][3*(j-1)+k]=ui->tableWidget->item(i,j)->text().toInt();
+    }
+    else if(j==0)
+        m_choregraphy[i][0]=ui->tableWidget->item(i,j)->text().toInt();
+    else if (j==1) {
+        for(int k = 1; k < 3; k++)
+            m_choregraphy[i][k]=ui->tableWidget->item(i,j)->text().toInt();
+    }
 
 }
 
