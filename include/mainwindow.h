@@ -31,10 +31,13 @@ private slots:
     bool openFile();
     bool saveFile();
     void update();
-    void updateTable(int,int);
+    void updateChoregraphy(int,int);
+    void quickTableChange(int,int);
     void startLSLStream();
-    void createLSLStream();
+    void createLSLStream(int i);
     void addStep();
+    void rmStep();
+    void clearStep();
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -47,7 +50,7 @@ private:
     Ui::MainWindow *ui;
     unsigned m_nbJoints=3*5;
     std::vector<std::vector<float>> m_choregraphy;
-    lsl::stream_outlet* m_outlet=nullptr;
+    lsl::stream_outlet* m_outlet[2] = {nullptr,nullptr};
     QTimer m_timer;
     unsigned m_sendingInd=0;
 };
