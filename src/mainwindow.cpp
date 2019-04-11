@@ -196,15 +196,42 @@ void MainWindow::quickTableChange(int i, int j)
  */
 void MainWindow::startLSLStream()
 {
-    try
+    if(m_sendingInd==0 && m_choregraphy.size()*ui->spinBox_loop->value()!=0)
     {
-        if(m_outlet==nullptr)
-            createLSLStream(ui->comboBox->currentIndex());
-        //Increase the playing token by the number of step that have to be sent.
-        m_sendingInd = m_choregraphy.size();
+        try
+        {
+
+            //if only one hand
+            if(ui->comboBox->currentIndex() < 2)
+            {
+                if(m_outlet[ui->comboBox->currentIndex()]==nullptr)
+                    createLSLStream(ui->comboBox->currentIndex());
+            }
+            else if(ui->comboBox->currentIndex() == 2)//if both hand
+            {
+                if(m_outlet[0]==nullptr)
+                    createLSLStream(0);
+                if(m_outlet[1]==nullptr)
+                    createLSLStream(1);
+            }
+
+            std::cout << m_sendingInd << std::endl;
+            //Increase the playing token by the number of step that have to be sent.
+            m_sendingInd = m_choregraphy.size()*ui->spinBox_loop->value();
+            ui->pushButton_play->setText("Stop");
+            enableGUI(false);
+
+
+        }
+        catch (std::exception& e)
+        { std::cerr << "[ERROR] Got an exception: " << e.what() << std::endl; }
     }
-    catch (std::exception& e)
-    { std::cerr << "[ERROR] Got an exception: " << e.what() << std::endl; }
+    else
+    {
+        m_sendingInd = 0;
+        ui->pushButton_play->setText("Play");
+        enableGUI(true);
+    }
 
 }
 
@@ -223,11 +250,13 @@ void MainWindow::createLSLStream(int i)
         }
         else
         {
-            std::string name = (i==0)?"Left_Hand_command":"Right_Hand_command";
+            std::cout << "Creating LSL stream ... \xd" << std::flush;
+            std::string name = (i==0)?"Left_Hand_Command":"Right_Hand_Command";
             lsl::stream_info info(name, "hand_choregraphy", m_nbJoints, lsl::IRREGULAR_RATE,lsl::cf_float32);
             if(m_outlet[i]!=nullptr)
                 delete m_outlet[i];
             m_outlet[i] = new lsl::stream_outlet(info);
+            std::cout << "LSL streams created." << std::endl;
         }
     }
     catch (std::exception& e)
@@ -243,13 +272,21 @@ void MainWindow::sendingData()
     if(m_sendingInd>0)
     {
         int ind = ui->comboBox->currentIndex();
+        //transform in int to ensure the right funtionning of %
+        int a = static_cast<int>(-m_sendingInd);
+        int b = static_cast<int>(m_choregraphy.size());
+        //implemente the true mathematical modulo
+        unsigned step =static_cast<unsigned>((a%b+b)%b);
+        std::cout << "Sent phase " << step << std::endl;
         if(m_outlet[0]!=nullptr && ind != 1)
-            m_outlet[0]->push_sample(m_choregraphy[m_choregraphy.size()-(m_sendingInd%m_choregraphy.size())]);
+            m_outlet[0]->push_sample(m_choregraphy[step]);
         if(m_outlet[1]!=nullptr && ind != 0)
-            m_outlet[1]->push_sample(m_choregraphy[m_choregraphy.size()-(m_sendingInd%m_choregraphy.size())]);
+            m_outlet[1]->push_sample(m_choregraphy[step]);
 
-        std::cout << "Sent phase " << m_choregraphy.size()-(m_sendingInd%m_choregraphy.size())  << "\xd"<< std::flush;
         m_sendingInd--;
+        //reset the GUI if no more step to send
+        if(m_sendingInd==0)
+            enableGUI(true);
     }
 }
 
@@ -280,11 +317,13 @@ void MainWindow::addStep()
 void MainWindow::rmStep()
 {
     int row = ui->tableWidget->currentRow();
+
     if(row>-1)
     {
         m_choregraphy.erase(m_choregraphy.begin()+row);
         ui->tableWidget->removeRow(row);
     }
+
 }
 
 /**
@@ -297,6 +336,19 @@ void MainWindow::clearStep()
     ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
 
     ui->tableWidget->setRowCount(0);
+}
+
+void MainWindow::enableGUI(bool en)
+{
+    ui->comboBox->setEnabled(en);
+    ui->tableWidget->setEnabled(en);
+    ui->pushButton_open->setEnabled(en);
+    ui->pushButton_save->setEnabled(en);
+    ui->pushButton_addStep->setEnabled(en);
+    ui->pushButton_rmStep->setEnabled(en);
+    ui->pushButton_clearStep->setEnabled(en);
+    ui->lineEdit->setEnabled(en);
+    ui->pushButton_play->setText(en?"Play":"Stop");
 }
 
 MainWindow::~MainWindow()

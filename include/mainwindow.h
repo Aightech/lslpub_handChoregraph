@@ -47,6 +47,8 @@ public:
 
 
 private:
+    void enableGUI(bool);
+
     Ui::MainWindow *ui;
     unsigned m_nbJoints=3*5;
     std::vector<std::vector<float>> m_choregraphy;
