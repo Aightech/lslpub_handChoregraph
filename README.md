@@ -1,6 +1,8 @@
 # lslpub_handChoregraph
 This program enable to easily create series of hand movement and to publish them as a LSL stream aiming to control the lslsub_handModel.
 
+![alt text](screenshotGUI.PNG "GUI")
+
 ## Run
 Use the lslpub_handChoregraph.exe file in the release directorie.
 
