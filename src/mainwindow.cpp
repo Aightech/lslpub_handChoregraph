@@ -7,7 +7,8 @@
  */
 #include "include/mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "GL/freeglut.h"
+#include "cmath"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -18,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //set up table widget
     ui->tableWidget->setColumnCount(6);
-    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Paaalm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
     for(int j=0; j< 5; j++)
         ui->tableWidget->setColumnWidth(j,100);
 
@@ -57,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_addStep, SIGNAL (released()), this, SLOT (addStep()));
     connect(ui->pushButton_rmStep, SIGNAL (released()), this, SLOT (rmStep()));
     connect(ui->pushButton_clearStep, SIGNAL (released()), this, SLOT (clearStep()));
+    connect(ui->pushButton_desactivate, SIGNAL(released()), this, SLOT(desactivate()));
 
     connect(ui->pushButton_save, SIGNAL (released()), this, SLOT (saveFile()));
     connect(ui->pushButton_play, SIGNAL (released()), this, SLOT (startLSLStream()));
@@ -89,6 +91,9 @@ bool MainWindow::openFile()
 
     //display the opened choregraphy
     ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
+    QTableWidgetItem *item = new QTableWidgetItem("test");
+    item->setCheckState(Qt::CheckState::Unchecked);
+    ui->tableWidget->setHorizontalHeaderItem(0,item);
     std::cout << "Reading file: " << ui->lineEdit->text().toStdString() << " ..."<< std::endl;
     unsigned i=0;
     for(std::string line; std::getline(source, line); )   //read stream line by line
@@ -138,7 +143,7 @@ bool MainWindow::saveFile()
           {
               for(unsigned j=0; j< m_choregraphy[i].size(); j++)
               {
-                  myfile << m_choregraphy[i][j] << " ";
+                  myfile << (std::isnan(m_choregraphy[i][j])?0:m_choregraphy[i][j]) << " ";
               }
               myfile << "\n";
           }
@@ -328,8 +333,30 @@ void MainWindow::clearStep()
     m_choregraphy.clear();
     ui->tableWidget->clear();
     ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
+    //ui->tableWidget->setHorizontalHeader()
 
     ui->tableWidget->setRowCount(0);
+
+}
+
+
+/**
+ * @brief MainWindow::addStep Add a step to the choregraphy.
+ */
+void MainWindow::desactivate()
+{
+
+    int col = ui->tableWidget->currentColumn();
+
+    if(col>-1)
+    {
+        for(int i = 0; i< m_choregraphy.size(); i++)
+        {
+            ui->tableWidget->item(i,col)->setText("nan");
+            ui->tableWidget->item(i,col)->setCheckState(Qt::CheckState::Unchecked);
+            m_choregraphy[i][col] = std::nanf("");
+        }
+    }
 }
 
 void MainWindow::enableGUI(bool en)

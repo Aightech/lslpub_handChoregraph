@@ -38,6 +38,7 @@ private slots:
     void addStep();
     void rmStep();
     void clearStep();
+    void desactivate();
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
