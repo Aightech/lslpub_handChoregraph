@@ -9,3 +9,9 @@ Use the lslpub_handChoregraph.exe file in the release directorie.
 ## Compile/Modify
 You can easealy modify or recompile this project by opening it with Qt creator.
 Don't forget to uncheck the option "shadow build" in the Project submenu.
+
+## Requirements
+On linux be sure to have openGL libraries:
+```bash
+sudo apt install freeglut3-dev
+```

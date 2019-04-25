@@ -200,20 +200,7 @@ void MainWindow::startLSLStream()
     {
         try
         {
-
-            //if only one hand
-            if(ui->comboBox->currentIndex() < 2)
-            {
-                if(m_outlet[ui->comboBox->currentIndex()]==nullptr)
-                    createLSLStream(ui->comboBox->currentIndex());
-            }
-            else if(ui->comboBox->currentIndex() == 2)//if both hand
-            {
-                if(m_outlet[0]==nullptr)
-                    createLSLStream(0);
-                if(m_outlet[1]==nullptr)
-                    createLSLStream(1);
-            }
+            createLSLStream(ui->comboBox->currentIndex());
 
             std::cout << m_sendingInd << std::endl;
             //Increase the playing token by the number of step that have to be sent.
@@ -286,8 +273,15 @@ void MainWindow::sendingData()
         m_sendingInd--;
         //reset the GUI if no more step to send
         if(m_sendingInd==0)
+        {
             enableGUI(true);
-    }
+
+            if(m_outlet[0]!=nullptr)
+                delete m_outlet[0];
+            if(m_outlet[1]!=nullptr)
+                delete m_outlet[1];
+        }
+     }
 }
 
 /**
