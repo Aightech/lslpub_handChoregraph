@@ -209,7 +209,6 @@ void MainWindow::startLSLStream()
         try
         {
             createLSLStream(ui->comboBox->currentIndex());
-
             std::cout << m_sendingInd << std::endl;
             //Increase the playing token by the number of step that have to be sent.
             m_sendingInd = m_choregraphy.size()*ui->spinBox_loop->value();
@@ -249,7 +248,10 @@ void MainWindow::createLSLStream(int i)
             std::string name = (i==0)?"Left_Hand_Command":"Right_Hand_Command";
             lsl::stream_info info(name, "hand_choregraphy", m_nbJoints, lsl::IRREGULAR_RATE,lsl::cf_float32);
             if(m_outlet[i]!=nullptr)
+            {
                 delete m_outlet[i];
+                m_outlet[i] = nullptr;
+            }
             m_outlet[i] = new lsl::stream_outlet(info);
             std::cout << "LSL streams created." << std::endl;
         }
