@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //set up table widget
     ui->tableWidget->setColumnCount(6);
-    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Paaalm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
     for(int j=0; j< 5; j++)
         ui->tableWidget->setColumnWidth(j,100);
 
@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_save, SIGNAL (released()), this, SLOT (saveFile()));
     connect(ui->pushButton_play, SIGNAL (released()), this, SLOT (startLSLStream()));
     connect(ui->spinBox, SIGNAL (valueChanged(int)), this, SLOT (update()));
-    connect(ui->comboBox, SIGNAL (currentIndexChanged(int)), this, SLOT (createLSLStream(int)));
+    //connect(ui->comboBox, SIGNAL (currentIndexChanged(int)), this, SLOT (createLSLStream(int)));
 
     //use this time out to send order at the right pace.
     QObject::connect(&m_timer, &QTimer::timeout, this, &MainWindow::sendingData);
@@ -91,9 +91,6 @@ bool MainWindow::openFile()
 
     //display the opened choregraphy
     ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
-    QTableWidgetItem *item = new QTableWidgetItem("test");
-    item->setCheckState(Qt::CheckState::Unchecked);
-    ui->tableWidget->setHorizontalHeaderItem(0,item);
     std::cout << "Reading file: " << ui->lineEdit->text().toStdString() << " ..."<< std::endl;
     unsigned i=0;
     for(std::string line; std::getline(source, line); )   //read stream line by line
@@ -205,14 +202,14 @@ void MainWindow::startLSLStream()
     {
         try
         {
-            createLSLStream(ui->comboBox->currentIndex());
+
 
             std::cout << m_sendingInd << std::endl;
             //Increase the playing token by the number of step that have to be sent.
             m_sendingInd = m_choregraphy.size()*ui->spinBox_loop->value();
             ui->pushButton_play->setText("Stop");
             enableGUI(false);
-
+            createLSLStream(ui->comboBox->currentIndex());
 
         }
         catch (std::exception& e)
@@ -245,8 +242,6 @@ void MainWindow::createLSLStream(int i)
             std::cout << "Creating LSL stream ... \xd" << std::flush;
             std::string name = (i==0)?"Left_Hand_Command":"Right_Hand_Command";
             lsl::stream_info info(name, "hand_choregraphy", m_nbJoints, lsl::IRREGULAR_RATE,lsl::cf_float32);
-            if(m_outlet[i]!=nullptr)
-                delete m_outlet[i];
             m_outlet[i] = new lsl::stream_outlet(info);
             std::cout << "LSL streams created." << std::endl;
         }
