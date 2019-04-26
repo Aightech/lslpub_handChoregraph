@@ -174,7 +174,7 @@ void MainWindow::updateChoregraphy(int i, int j)
         for(int k = 0; k < 3; k++)
         {
             m_choregraphy[i][3*(j-1)+k]=ui->tableWidget->item(i,j)->text().toFloat();
-            //std::cout <<  i << " " << 3*(j-1)+k << " : " <<ui->tableWidget->item(i,j)->text().toStdString() << " " << m_choregraphy[i][3*(j-1)+k] << std::endl;
+            //²²std::cout <<  i << " " << 3*(j-1)+k << " : " <<ui->tableWidget->item(i,j)->text().toStdString() << " " << m_choregraphy[i][3*(j-1)+k] << std::endl;
         }
 
     else if(j==0)//palm

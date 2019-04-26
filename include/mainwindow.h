@@ -11,7 +11,12 @@
 
 #include <QMainWindow>
 #include <QTableWidget>
- #include <QTime>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QLineEdit>
+#include <QTableView>
+#include <QTableWidgetItem>
+#include <QTime>
 #include <vector>
 #include <lsl_cpp.h>
 #include <iostream>
