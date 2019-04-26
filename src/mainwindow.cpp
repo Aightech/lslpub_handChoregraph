@@ -7,7 +7,7 @@
  */
 #include "include/mainwindow.h"
 #include "ui_mainwindow.h"
-#include "GL/freeglut.h"
+//#include "GL/freeglut.h"
 #include "cmath"
 
 
@@ -172,14 +172,17 @@ void MainWindow::updateChoregraphy(int i, int j)
 {
     if(j>1)//if other than the thump finger
         for(int k = 0; k < 3; k++)
-            m_choregraphy[i][3*(j-1)+k]=ui->tableWidget->item(i,j)->text().toInt();
+        {
+            m_choregraphy[i][3*(j-1)+k]=ui->tableWidget->item(i,j)->text().toFloat();
+            //std::cout <<  i << " " << 3*(j-1)+k << " : " <<ui->tableWidget->item(i,j)->text().toStdString() << " " << m_choregraphy[i][3*(j-1)+k] << std::endl;
+        }
 
     else if(j==0)//palm
-        m_choregraphy[i][0]=ui->tableWidget->item(i,j)->text().toInt();
+        m_choregraphy[i][0]=ui->tableWidget->item(i,j)->text().toFloat();
 
     else if (j==1)//thumb
         for(int k = 1; k < 3; k++)
-            m_choregraphy[i][k]=ui->tableWidget->item(i,j)->text().toInt();
+            m_choregraphy[i][k]=ui->tableWidget->item(i,j)->text().toFloat();
 }
 
 /**
@@ -270,6 +273,10 @@ void MainWindow::sendingData()
         //implemente the true mathematical modulo
         unsigned step =static_cast<unsigned>((a%b+b)%b);
         std::cout << "Sent phase " << step << std::endl;
+        for(int i =0; i<m_choregraphy[step].size(); i++)
+            std::cout << m_choregraphy[step][i] << " ";
+        std::cout << std::endl;
+
         if(m_outlet[0]!=nullptr && ind != 1)
             m_outlet[0]->push_sample(m_choregraphy[step]);
         if(m_outlet[1]!=nullptr && ind != 0)
@@ -354,7 +361,9 @@ void MainWindow::desactivate()
         {
             ui->tableWidget->item(i,col)->setText("nan");
             ui->tableWidget->item(i,col)->setCheckState(Qt::CheckState::Unchecked);
-            m_choregraphy[i][col] = std::nanf("");
+            //m_choregraphy[i][col] = std::nanf("");
+            //std::cout <<  "desactivate " << i << " " << col << " : " << m_choregraphy[i][col] << std::endl;
+
         }
     }
 }
