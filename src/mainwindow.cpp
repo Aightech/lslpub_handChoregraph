@@ -18,10 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     //set up table widget
-    ui->tableWidget->setColumnCount(6);
-    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
-    for(int j=0; j< 5; j++)
-        ui->tableWidget->setColumnWidth(j,100);
+    ui->tableWidget->setColumnCount(7);
 
     //set up stream combobox
     ui->comboBox->addItem("Left_Hand_Command",0);
@@ -32,8 +29,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //set up lineedit file path and try to open a choregraphy
     ui->lineEdit->setText("choregraphies/01.cry");
-    if(!openFile())
+    openFile();
+    /*
     {//if no choregraphy found, create an example table
+        ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
         ui->tableWidget->setRowCount(4);//4 steps
         for(unsigned i=0; i< 4; i++)
         {
@@ -49,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 ui->tableWidget->setItem(i, j, item);
             }
         }
-    }
+    }*/
 
     connect(ui->tableWidget, SIGNAL (cellClicked(int, int)), this, SLOT (quickTableChange(int,int)));
     connect(ui->tableWidget, SIGNAL (cellChanged(int, int)), this, SLOT (updateChoregraphy(int,int)));
@@ -87,10 +86,11 @@ bool MainWindow::openFile()
         return false;
     }
     m_choregraphy.clear();
+    m_times.clear();
     ui->tableWidget->clear();
 
     //display the opened choregraphy
-    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky") << tr("Time"));
     std::cout << "Reading file: " << ui->lineEdit->text().toStdString() << " ..."<< std::endl;
     unsigned i=0;
     for(std::string line; std::getline(source, line); )   //read stream line by line
@@ -100,6 +100,9 @@ bool MainWindow::openFile()
         m_choregraphy.push_back(v); // add a new step to the choregraphy
         for(unsigned j =0; j<m_nbJoints; j++)//store the commands
             in >> m_choregraphy[i][j];
+        double t;
+        in >> t;
+        m_times.push_back(t);
             //std::cout << m_choregraphy[i][j] << " ";
 
         //create the table item of the new command
@@ -122,6 +125,8 @@ bool MainWindow::openFile()
             item->setCheckState((state)?Qt::CheckState::Checked:Qt::CheckState::Unchecked);
             ui->tableWidget->setItem(static_cast<int>(i), j+1, item);
         }
+        item = new QTableWidgetItem(QString::number(static_cast<double>(m_times[i])));
+        ui->tableWidget->setItem(static_cast<int>(i), 6, item);
         i++;
     }
 
@@ -134,6 +139,7 @@ bool MainWindow::openFile()
 bool MainWindow::saveFile()
 {
     std::ofstream myfile (ui->lineEdit->text().toStdString(),std::ios::trunc);
+    std::cout << "Saving to " << ui->lineEdit->text().toStdString() << std::endl;
       if (myfile.is_open())
       {
           for(unsigned i=0; i< m_choregraphy.size(); i++)
@@ -142,6 +148,7 @@ bool MainWindow::saveFile()
               {
                   myfile << (std::isnan(m_choregraphy[i][j])?0:m_choregraphy[i][j]) << " ";
               }
+              myfile << m_times[i];
               myfile << "\n";
           }
         myfile.close();
@@ -167,12 +174,16 @@ void MainWindow::update()
  */
 void MainWindow::updateChoregraphy(int i, int j)
 {
-    if(j>1)//if other than the thump finger
+    if(j>1 && j < 6)//if other than the thump finger
         for(int k = 0; k < 3; k++)
         {
             m_choregraphy[i][3*(j-1)+k]=ui->tableWidget->item(i,j)->text().toFloat();
             //²²std::cout <<  i << " " << 3*(j-1)+k << " : " <<ui->tableWidget->item(i,j)->text().toStdString() << " " << m_choregraphy[i][3*(j-1)+k] << std::endl;
         }
+    else if (j==6)
+    {
+            m_times[i] = ui->tableWidget->item(i,j)->text().toFloat();
+    }
 
     else if(j==0)//palm
         m_choregraphy[i][0]=ui->tableWidget->item(i,j)->text().toFloat();
@@ -205,12 +216,6 @@ void MainWindow::startLSLStream()
     {
         try
         {
-<<<<<<< HEAD
-
-
-=======
-            createLSLStream(ui->comboBox->currentIndex());
->>>>>>> 740df08977c13ffc04fd812f7683400834fbf702
             std::cout << m_sendingInd << std::endl;
             //Increase the playing token by the number of step that have to be sent.
             m_sendingInd = m_choregraphy.size()*ui->spinBox_loop->value();
@@ -249,14 +254,12 @@ void MainWindow::createLSLStream(int i)
             std::cout << "Creating LSL stream ... \xd" << std::flush;
             std::string name = (i==0)?"Left_Hand_Command":"Right_Hand_Command";
             lsl::stream_info info(name, "hand_choregraphy", m_nbJoints, lsl::IRREGULAR_RATE,lsl::cf_float32);
-<<<<<<< HEAD
-=======
+
             if(m_outlet[i]!=nullptr)
             {
                 delete m_outlet[i];
                 m_outlet[i] = nullptr;
             }
->>>>>>> 740df08977c13ffc04fd812f7683400834fbf702
             m_outlet[i] = new lsl::stream_outlet(info);
             std::cout << "LSL streams created." << std::endl;
         }
@@ -288,7 +291,7 @@ void MainWindow::sendingData()
             m_outlet[0]->push_sample(m_choregraphy[step]);
         if(m_outlet[1]!=nullptr && ind != 0)
             m_outlet[1]->push_sample(m_choregraphy[step]);
-
+        m_timer.setInterval(m_times[step]);
         m_sendingInd--;
         //reset the GUI if no more step to send
         if(m_sendingInd==0)

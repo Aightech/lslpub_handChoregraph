@@ -58,6 +58,7 @@ private:
     Ui::MainWindow *ui;
     unsigned m_nbJoints=3*5;
     std::vector<std::vector<float>> m_choregraphy;
+    std::vector<double> m_times;
     lsl::stream_outlet* m_outlet[2] = {nullptr,nullptr};
     QTimer m_timer;
     unsigned m_sendingInd=0;
