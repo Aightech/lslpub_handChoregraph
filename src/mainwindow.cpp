@@ -30,25 +30,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //set up lineedit file path and try to open a choregraphy
     ui->lineEdit->setText("choregraphies/01.cry");
     openFile();
-    /*
-    {//if no choregraphy found, create an example table
-        ui->tableWidget->setHorizontalHeaderLabels(QStringList() << tr("Palm") << tr("Thumb")<< tr("Index")<< tr("Middle")<< tr("Ring")<< tr("Pinky"));
-        ui->tableWidget->setRowCount(4);//4 steps
-        for(unsigned i=0; i< 4; i++)
-        {
-            std::vector<float> v(m_nbJoints);
-            m_choregraphy.push_back(v);
-            for(unsigned j =0; j<m_nbJoints; j++)
-                m_choregraphy[i][j]=0;
-
-            for(int j=0; j< 6; j++)
-            {
-                QTableWidgetItem *item = new QTableWidgetItem("0");
-                item->setCheckState(Qt::CheckState::Unchecked);
-                ui->tableWidget->setItem(i, j, item);
-            }
-        }
-    }*/
 
     connect(ui->tableWidget, SIGNAL (cellClicked(int, int)), this, SLOT (quickTableChange(int,int)));
     connect(ui->tableWidget, SIGNAL (cellChanged(int, int)), this, SLOT (updateChoregraphy(int,int)));
@@ -258,7 +239,6 @@ void MainWindow::createLSLStream(int i)
             if(m_outlet[i]!=nullptr)
             {
                 delete m_outlet[i];
-                m_outlet[i] = nullptr;
             }
             m_outlet[i] = new lsl::stream_outlet(info);
             std::cout << "LSL streams created." << std::endl;
@@ -302,6 +282,8 @@ void MainWindow::sendingData()
                 delete m_outlet[0];
             if(m_outlet[1]!=nullptr)
                 delete m_outlet[1];
+            m_outlet[0]=nullptr;
+            m_outlet[1]=nullptr;
         }
      }
 }
