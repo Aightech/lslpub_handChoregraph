@@ -16,6 +16,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QPixmap pixmap("logo.png");
+
+    QIcon ButtonIcon(pixmap);
+    ui->button->setIcon(ButtonIcon);
+    //ui->button->setMaximumWidth(50);
+    //ui->button->setIconSize(QSize(60,60));
 
     //set up table widget
     ui->tableWidget->setColumnCount(7);
