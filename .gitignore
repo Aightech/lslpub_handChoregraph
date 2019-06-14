@@ -12,8 +12,11 @@
 !/forms/*
 !/choregraphies
 !/choregraphies/*
-!/release
-!/release/*
+!/docs
+!/docs/*
 !README.md
 !lslpub_handChoregraph.pro
-!screenshotGUI.png
+
+/bin/WIN32/Window/*
+!/bin/WIN32/Window/lslsub_plotter.exe
+!/bin/WIN32/Window/liblsl64.dll
